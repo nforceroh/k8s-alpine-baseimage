@@ -1,0 +1,40 @@
+name: Build k8s-alpine-baseimage
+
+env:
+  PRJDIR: "k8s-alpine-baseimage"
+  IMGNAME: "k8s-alpine-baseimage"
+  REPOOWNER: "nforceroh"
+
+on:
+  push:
+
+jobs:
+  deploy-docker-image:
+    runs-on: arc-k8s-alpine-baseimage
+    
+    steps:
+      - run: echo "Starting build for ${{ env.IMGNAME }}"
+
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set build date
+        id: date
+        run: echo "::set-output name=builddate::$(date +'%Y%m%d%H%M%S')"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            ${{ env.REPOOWNER }}/${{ env.IMGNAME }}:${{ steps.date.outputs.builddate }}
+            ${{ env.REPOOWNER }}/${{ env.IMGNAME }}:latest
+          build-args: |
+            BUILD_DATE=${{ steps.date.outputs.builddate }}
+            VERSION=${{ steps.date.outputs.builddate }}
