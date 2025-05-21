@@ -1,0 +1,23 @@
+#!/command/with-contenv bash
+
+echo "Checking for abc user"
+PUID=${PUID:-3001}
+PGID=${PGID:-3000}
+
+/usr/sbin/addgroup -g ${PGID} abc && \
+/usr/sbin/adduser -D -u ${PUID} -G abc abc
+
+echo "
+───────────────────────────────────────
+User UID:    $(id -u abc)
+User GID:    $(id -g abc)
+───────────────────────────────────────
+"
+
+for directory in /app /config /defaults; do
+  if [ ! -d ${directory} ]; then
+    echo "Creating directory: ${directory}"
+    mkdir -p ${directory}
+    chown -R abc:abc ${directory}
+  fi
+done
