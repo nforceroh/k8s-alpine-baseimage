@@ -28,13 +28,17 @@ RUN \
   echo "**** Installing/Upgrading alpine packages ****" \
   && apk upgrade --quiet --no-cache \
   && apk add --quiet --no-cache tar xz alpine-release rxvt-unicode-terminfo shadow libc-utils apk-tools procps-ng \
-     jq bind-tools openssl tzdata ca-certificates coreutils bash git wget curl findutils openssl busybox \
-  && echo "**** Adding S6 overlay ****" \
+     jq bind-tools openssl tzdata ca-certificates coreutils bash git wget curl findutils openssl busybox
+
+RUN \
+  echo "**** Adding S6 overlay ****" \
   && curl --location --silent https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz | tar -C / -Jxp \
   && curl --location --silent https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz | tar -C / -Jxp \
   && curl --location --silent https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz | tar -C / -Jxp \
-  && curl --location --silent https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz | tar -C / -Jxp \
-  && echo "**** cleanup ****" \
+  && curl --location --silent https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz | tar -C / -Jxp
+
+RUN \
+  echo "**** cleanup ****" \
   && apk del --quiet --no-cache --purge \
   && rm -rf /var/cache/apk/*  
 
