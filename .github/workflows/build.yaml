@@ -1,9 +1,9 @@
 name: Build k8s-alpine-baseimage
 
 env:
-  PRJDIR: "k8s-alpine-baseimage"
-  IMGNAME: "k8s-alpine-baseimage"
-  REPOOWNER: "nforceroh"
+#  PRJDIR: "k8s-alpine-baseimage"
+#  IMGNAME: "k8s-alpine-baseimage"
+  DOCKER_OWNER: "nforceroh"
 
 on:
   push:
@@ -11,12 +11,17 @@ on:
 jobs:
   deploy-docker-image:
     runs-on: arc-k8s-alpine-baseimage
-    
     steps:
-      - run: echo "Starting build for ${{ env.IMGNAME }}"
+      - name: Get repo name
+        run: |
+          echo "${{ github.repository }}" | cut -d "/" -f 2 > repo.txt
+          echo "REPO_NAME=$(cat repo.txt)" >> $GITHUB_ENV
+          rm -rf repo.txt
+
+      - run: echo "Starting build for ${{ env.REPO_NAME }}"
 
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set build date
         id: date
@@ -33,8 +38,8 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ env.REPOOWNER }}/${{ env.IMGNAME }}:${{ steps.date.outputs.builddate }}
-            ${{ env.REPOOWNER }}/${{ env.IMGNAME }}:latest
+            ${{ env.DOCKER_OWNER }}/${{ env.REPO_NAME }}:${{ steps.date.outputs.builddate }}
+            ${{ env.DOCKER_OWNER }}/${{ env.REPO_NAME }}:latest
           build-args: |
             BUILD_DATE=${{ steps.date.outputs.builddate }}
             VERSION=${{ steps.date.outputs.builddate }}
