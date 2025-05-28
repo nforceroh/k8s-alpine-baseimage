@@ -41,6 +41,7 @@ RUN \
   && rm -rf /var/cache/apk/*  
 
 COPY rootfs/ /
+RUN find /etc/s6-overlay/s6-rc.d -name run -exec chmod 755 {} \; 
 
 ENTRYPOINT [ "/init" ]
 #CMD /bin/ash
