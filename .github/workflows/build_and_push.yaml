@@ -8,14 +8,14 @@ jobs:
     runs-on: arc-k8s-alpine-baseimage
     steps:
       - name: Get repo name
-        run: echo "REPO_NAME=$(echo ${{ github.repository }} | cut -d "/" -f 2)" >> $GITHUB_ENV
+        run: echo "IMAGE_NAME=$(echo ${{ github.repository }} | cut -d "/" -f 2)" >> $GITHUB_ENV
       - name: Set build date
         id: date
-        run: echo "builddate=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+        run: echo "BUILD_DATE=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
       - name: Variables defined
         run: |
           echo "IMAGE_NAME  = ${{ env.REPO_NAME }}"
-          echo "BUILDDATE   = ${{ env.builddate }}"
+          echo "BUILD_DATE   = ${{ env.BUILD_DATE }}"
           echo "github.actor = ${{ github.actor }}"
       - run: echo "Starting build for ${{ github.repository }}"
       - uses: actions/checkout@v3
@@ -32,8 +32,8 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.builddate }}
+            ${{ env.IMAGE_NAME }}:${{ env.BUILD_DATE }}
             ${{ env.IMAGE_NAME }}:latest
           build-args: |
-            BUILD_DATE=${{ env.builddate }}
-            VERSION=${{ env.builddate }}
+            BUILD_DATE=${{ env.BUILD_DATE }}
+            VERSION=${{ env.BUILD_DATE }}
