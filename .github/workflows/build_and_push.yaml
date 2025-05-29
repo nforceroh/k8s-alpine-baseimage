@@ -32,8 +32,8 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.BUILD_DATE }}
-            ${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.BUILD_DATE }}
+            ghcr.io/${{ env.IMAGE_NAME }}:latest
           build-args: |
             BUILD_DATE=${{ env.BUILD_DATE }}
             VERSION=${{ env.BUILD_DATE }}
