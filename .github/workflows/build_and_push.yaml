@@ -23,7 +23,7 @@ jobs:
         with:
           username: ${{ secrets.GHCR_OWNER }}
           password: ${{ secrets.GHCR_TOKEN }}
-          hostname: ghcr.io
+          registry: ghcr.io
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
