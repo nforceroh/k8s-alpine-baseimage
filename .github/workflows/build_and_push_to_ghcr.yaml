@@ -21,9 +21,9 @@ jobs:
         run: echo "BUILD_DATE=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
       - name: Variables defined
         run: |
-          echo "IMAGE_NAME  = ${{ env.IMAGE_NAME }}"
-          echo "BUILD_DATE   = ${{ env.BUILD_DATE }}"
-          echo "github.actor = ${{ github.actor }}"
+          echo "IMAGE_NAME              = ${{ env.IMAGE_NAME }}"
+          echo "BUILD_DATE              = ${{ env.BUILD_DATE }}"
+          echo "github.repository_owner = ${{ github.repository_owner }}"
       - run: echo "Starting build for ${{ github.repository }}"
       - uses: actions/checkout@v3
       - name: Extract metadata (tags, labels) for Docker
@@ -50,20 +50,9 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ steps.meta.outputs.tags }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.BUILD_DATE }}
             ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             BUILD_DATE=${{ env.BUILD_DATE }}
             VERSION=${{ env.BUILD_DATE }}
-
-#        - name: Build and push
-#        uses: docker/build-push-action@v6
-#        with:
-#          push: true
-#          tags: |
-#            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.BUILD_DATE }}
-#            ghcr.io/${{ env.IMAGE_NAME }}:latest
-#          build-args: |
-#            BUILD_DATE=${{ env.BUILD_DATE }}
-#            VERSION=${{ env.BUILD_DATE }}
