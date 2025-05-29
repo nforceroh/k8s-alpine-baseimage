@@ -25,15 +25,15 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}      
+          password: ${{ secrets.GITHUB_TOKEN }}     
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
-            ${{ secrets.GHCR_OWNER }}/${{ env.IMAGE_NAME }}:${{ env.builddate }}
-            ${{ secrets.GHCR_OWNER }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ env.builddate }}
+            ${{ env.IMAGE_NAME }}:latest
           build-args: |
             BUILD_DATE=${{ env.builddate }}
             VERSION=${{ env.builddate }}
