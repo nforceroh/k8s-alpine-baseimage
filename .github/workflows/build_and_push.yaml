@@ -14,7 +14,7 @@ jobs:
         run: echo "BUILD_DATE=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
       - name: Variables defined
         run: |
-          echo "IMAGE_NAME  = ${{ env.REPO_NAME }}"
+          echo "IMAGE_NAME  = ${{ env.IMAGE_NAME }}"
           echo "BUILD_DATE   = ${{ env.BUILD_DATE }}"
           echo "github.actor = ${{ github.actor }}"
       - run: echo "Starting build for ${{ github.repository }}"
@@ -28,7 +28,7 @@ jobs:
             type=ref,event=pr
             type=semver,pattern=version
             type=semver,pattern={{major}}.{{minor}}
-          images: ghcr.io/${{ env.IMAGE_NAME }}     
+          images: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}     
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
