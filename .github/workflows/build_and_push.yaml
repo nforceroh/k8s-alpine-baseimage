@@ -1,0 +1,31 @@
+name: Docker Image for GHCR
+
+on:
+  push:
+
+jobs:
+  deploy-docker-image:
+    runs-on: arc-k8s-alpine-baseimage
+    steps:
+      - name: Get repo name
+        run: echo "REPO_NAME=$(echo ${{ github.repository }} | cut -d "/" -f 2)" >> $GITHUB_ENV
+      - name: Set build date
+        id: date
+        run: echo "builddate={$(date +'%Y%m%d%H%M%S')}" >> $GITHUB_ENV
+      - run: echo "Starting build for ${{ github.repository }}"
+      - uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.GHCR_OWNER }}
+          password: ${{ secrets.GHCR_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            ${{ secrets.GHCR_OWNER }}/${{ env.IMAGE_NAME }}:${{ env.builddate }}
+            ${{ secrets.GHCR_OWNER }}/${{ env.IMAGE_NAME }}:latest
+          build-args: |
+            BUILD_DATE=${{ env.builddate }}
+            VERSION=${{ env.builddate }}
