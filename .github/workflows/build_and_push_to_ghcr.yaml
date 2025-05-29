@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy-docker-image:
-    runs-on: arc-k8s-alpine-baseimage
+    runs-on: ubuntu-latest
   
     permissions:
       contents: read
