@@ -7,13 +7,8 @@ ARG \
   S6_OVERLAY_ARCH="x86_64"
 
 LABEL \
-  org.label-schema.maintainer="Sylvain Martin (sylvain@nforcer.com)" \
-  org.label-schema.version=$VERSION \
-  org.label-schema.build-date=$BUILD_DATE \
-  org.label-schema.vcs-type=Git \
-  org.label-schema.description="Alpine linux base image" \
-  org.label-schema.vcs-url="https://github.com/nforceroh/k8s-alpine-baseimage"
-
+  org.label-schema.maintainer="Sylvain Martin (sylvain@nforcer.com)" 
+  
 ENV \
     S6_LOGGING=1 \
     S6_VERBOSITY=1 \
@@ -26,7 +21,7 @@ RUN \
   echo "**** Installing/Upgrading alpine packages ****" \
   && apk upgrade --quiet --no-cache \
   && apk add --quiet --no-cache tar xz alpine-release rxvt-unicode-terminfo shadow libc-utils apk-tools procps-ng \
-     jq bind-tools openssl tzdata ca-certificates coreutils bash git wget curl findutils openssl busybox
+     jq bind-tools openssl tzdata ca-certificates coreutils bash git wget curl findutils busybox
 
 RUN \
   echo "**** Adding S6 overlay ****" \
@@ -40,8 +35,7 @@ RUN \
   && apk del --quiet --no-cache --purge \
   && rm -rf /var/cache/apk/*  
 
-COPY rootfs/ /
-RUN find /etc/s6-overlay/s6-rc.d -name run -exec chmod 755 {} \; 
+COPY --chmod=755 /etc/s6-overlay /etc/s6-overlay
 
 ENTRYPOINT [ "/init" ]
 #CMD /bin/ash
