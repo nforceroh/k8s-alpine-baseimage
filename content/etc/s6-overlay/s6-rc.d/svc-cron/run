@@ -1,9 +1,9 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-if [[ -z "${ENABLE_CRON}" && "${ENABLE_CRON}" != "true" ]]; then
+if [[ -z "${ENABLE_CRON}" || ( "${ENABLE_CRON,,}" != "true" ) ]]; then
     echo "**** ENABLE_CRON is not set to true, exiting ****"
-    exit 0
+    sleep infinity
 fi
 
 echo "ENABLE_CRON is set to true, starting cron service..."
