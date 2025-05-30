@@ -2,6 +2,8 @@
 
 TZ=${TZ:-America/New_York}
 
+echo "Setting timezone to $TZ"
+
 if [ ! -z $TZ ]; then
   if [ ! -f /etc/timezone ] || grep $TZ /etc/timezone; then
     echo $TZ > /etc/timezone

@@ -15,7 +15,8 @@ ENV \
     S6_FIX_ATTRS_HIDDEN=1 \
     S6_KILL_FINISH_MAXTIME=300000 \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0 \
-    TZ=America/New_York
+    TZ=America/New_York \
+    ENABLE_CRON=false
 
 RUN \
   echo "**** Installing/Upgrading alpine packages ****" \
@@ -35,7 +36,7 @@ RUN \
   && apk del --quiet --no-cache --purge \
   && rm -rf /var/cache/apk/*  
 
-COPY --chmod=755 /etc/s6-overlay /etc/s6-overlay
+COPY --chmod=755 /content/etc/s6-overlay /etc/s6-overlay
 
 ENTRYPOINT [ "/init" ]
 #CMD /bin/ash

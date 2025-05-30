@@ -1,6 +1,13 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
+if [[ -z "${ENABLE_CRON}" && "${ENABLE_CRON}" != "true" ]]; then
+    echo "**** ENABLE_CRON is not set to true, exiting ****"
+    exit 0
+fi
+
+echo "ENABLE_CRON is set to true, starting cron service..."
+
 if builtin command -v crontab >/dev/null 2>&1 && [[ -n "$(crontab -l -u abc 2>/dev/null || true)" || -n "$(crontab -l -u root 2>/dev/null || true)" ]]; then
     if builtin command -v busybox >/dev/null 2>&1 && [[ $(busybox || true) =~ [[:space:]](crond)([,]|$) ]]; then
         exec busybox crond -f -S -l 5
