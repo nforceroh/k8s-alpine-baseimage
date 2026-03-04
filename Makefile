@@ -16,8 +16,8 @@ build:
 
 push: 
 	@echo "Tagging and Pushing $(IMG_NAME):$(VERSION) image"
-	$(DOCKERCMD) tag $(IMG_REPO)/$(IMG_NAME) docker.io/$(IMG_REPO)/$(IMG_NAME):latest
-	$(DOCKERCMD) push docker.io/$(IMG_REPO)/$(IMG_NAME):latest
+	$(DOCKERCMD) tag $(IMG_REPO)/$(IMG_NAME) docker.io/$(IMG_REPO)/$(IMG_NAME):3.23
+	$(DOCKERCMD) push docker.io/$(IMG_REPO)/$(IMG_NAME):3.23
 
 end:
 	@echo "Done!"
