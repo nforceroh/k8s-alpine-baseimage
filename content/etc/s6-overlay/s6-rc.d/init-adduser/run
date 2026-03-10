@@ -4,8 +4,8 @@ echo "Checking for abc user"
 PUID=${PUID:-3001}
 PGID=${PGID:-3000}
 
-/usr/sbin/addgroup -g ${PGID} abc && \
-/usr/sbin/adduser -D -u ${PUID} -G abc -h /app -g "App User" abc
+/usr/sbin/addgroup -g "${PGID}" abc 2>/dev/null || true
+/usr/sbin/adduser -D -u "${PUID}" -G abc -h /app -g "App User" abc 2>/dev/null || true
 
 echo "
 ───────────────────────────────────────
@@ -15,9 +15,9 @@ User GID:    $(id -g abc)
 "
 
 for directory in /app /config /defaults; do
-  if [ ! -d ${directory} ]; then
+  if [ ! -d "${directory}" ]; then
     echo "Creating directory: ${directory}"
-    mkdir -p ${directory}
-    chown -R abc:abc ${directory}
+    mkdir -p "${directory}"
+    chown -R abc:abc "${directory}"
   fi
 done

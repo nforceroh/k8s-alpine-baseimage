@@ -7,7 +7,9 @@ ARG \
   S6_OVERLAY_ARCH="x86_64"
 
 LABEL \
-  org.label-schema.maintainer="Sylvain Martin (sylvain@nforcer.com)" 
+  org.label-schema.maintainer="Sylvain Martin (sylvain@nforcer.com)" \
+  org.label-schema.build-date="${BUILD_DATE}" \
+  org.label-schema.version="${VERSION}"
   
 ENV \
     S6_LOGGING=1 \
@@ -22,19 +24,15 @@ RUN \
   echo "**** Installing/Upgrading alpine packages ****" \
   && apk upgrade --quiet --no-cache \
   && apk add --quiet --no-cache tar xz alpine-release rxvt-unicode-terminfo shadow libc-utils apk-tools procps-ng \
-     jq bind-tools openssl tzdata ca-certificates coreutils bash git wget curl findutils busybox
+     jq bind-tools openssl tzdata ca-certificates coreutils bash git wget curl findutils busybox \
+  && rm -rf /var/cache/apk/*
 
 RUN \
   echo "**** Adding S6 overlay ****" \
-  && curl --location --silent https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz | tar -C / -Jxp \
-  && curl --location --silent https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz | tar -C / -Jxp \
-  && curl --location --silent https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz | tar -C / -Jxp \
-  && curl --location --silent https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz | tar -C / -Jxp
-
-RUN \
-  echo "**** cleanup ****" \
-  && apk del --quiet --no-cache --purge \
-  && rm -rf /var/cache/apk/*  
+  && curl --location --silent --fail https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz | tar -C / -Jxp \
+  && curl --location --silent --fail https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz | tar -C / -Jxp \
+  && curl --location --silent --fail https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz | tar -C / -Jxp \
+  && curl --location --silent --fail https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz | tar -C / -Jxp
 
 COPY --chmod=755 /content/etc/s6-overlay /etc/s6-overlay
 
