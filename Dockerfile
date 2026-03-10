@@ -35,7 +35,7 @@ RUN \
   && curl --location --silent --fail https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz -o s6-overlay-noarch.tar.xz \
   && curl --location --silent --fail https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz -o s6-overlay-arch.tar.xz \
   && curl --location --silent --fail https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz -o s6-overlay-symlinks-noarch.tar.xz \
-  && curl --location --silent --fail https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-${S6_OVERLAY_ARCH}.tar.xz -o s6-overlay-symlinks-arch.tar.xz \
+  && curl --location --silent --fail https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz -o s6-overlay-symlinks-arch.tar.xz \
   && echo "**** Extracting S6 overlay ****" \
   && tar -C / -Jxp -f s6-overlay-noarch.tar.xz \
   && tar -C / -Jxp -f s6-overlay-arch.tar.xz \
