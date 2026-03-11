@@ -4,8 +4,7 @@ ARG \
   BUILD_DATE=now \
   VERSION=unknown \
   S6_OVERLAY_VERSION=3.2.2.0 \
-  S6_OVERLAY_ARCH=x86_64 \
-  DOCKERIZE_VERSION=v0.10.1
+  S6_OVERLAY_ARCH=x86_64
 
 LABEL \
   org.label-schema.maintainer="Sylvain Martin (sylvain@nforcer.com)" \
@@ -42,8 +41,6 @@ RUN \
   && tar -C / -Jxp -f s6-overlay-arch.tar.xz \
   && tar -C / -Jxp -f s6-overlay-symlinks-noarch.tar.xz \
   && tar -C / -Jxp -f s6-overlay-symlinks-arch.tar.xz \
-  && echo "**** Installing Dockerize ****" \
-  && wget -O - https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz | tar xzf - -C /usr/local/bin && chmod +x /usr/local/bin/dockerize \
   && rm -rf /tmp/s6
 
 COPY --chmod=755 /content/etc/s6-overlay /etc/s6-overlay
