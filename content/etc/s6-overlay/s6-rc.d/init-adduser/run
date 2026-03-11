@@ -1,26 +1,36 @@
 #!/command/with-contenv bash
 
-echo "Checking for abc user"
+UID=${UID:-abc}
 PUID=${PUID:-3001}
 PGID=${PGID:-3000}
 
-# Keep startup non-fatal if user/group already exists or cannot be recreated.
-/usr/sbin/addgroup -g "${PGID}" abc 2>/dev/null || echo "abc group already exists or could not be created"
-/usr/sbin/adduser -D -u "${PUID}" -G abc -h /app -g "App User" abc 2>/dev/null || echo "abc user already exists or could not be created"
+echo "Checking for ${UID} user"
+
+  # If the ${UID} user already exists with the expected UID/GID (e.g. set up by a
+# derived image), skip creation and ownership changes entirely.
+if id "${UID}" &>/dev/null \
+    && [ "$(id -u "${UID}")" = "${PUID}" ] \
+    && [ "$(id -g "${UID}")" = "${PGID}" ]; then
+  echo "${UID} user already exists with correct UID/GID, skipping init"
+else
+  # Keep startup non-fatal if user/group already exists or cannot be recreated.
+  /usr/sbin/addgroup -g "${PGID}" "${UID}" 2>/dev/null || echo "${UID} group already exists or could not be created"
+  /usr/sbin/adduser -D -u "${PUID}" -G "${UID}" -h /app -g "App User" "${UID}" 2>/dev/null || echo "${UID} user already exists or could not be created"
+
+  for directory in /app /config /defaults; do
+    if [ ! -d "${directory}" ]; then
+      echo "Creating directory: ${directory}"
+      mkdir -p "${directory}"
+    fi
+
+    echo "Ensuring ownership for: ${directory}"
+    chown -R "${UID}:${UID}" "${directory}"
+  done
+fi
 
 echo "
 ───────────────────────────────────────
-User UID:    $(id -u abc)
-User GID:    $(id -g abc)
+User UID:    $(id -u "${UID}")
+User GID:    $(id -g "${UID}")
 ───────────────────────────────────────
 "
-
-for directory in /app /config /defaults; do
-  if [ ! -d "${directory}" ]; then
-    echo "Creating directory: ${directory}"
-    mkdir -p "${directory}"
-  fi
-
-  echo "Ensuring ownership for: ${directory}"
-  chown -R abc:abc "${directory}"
-done
