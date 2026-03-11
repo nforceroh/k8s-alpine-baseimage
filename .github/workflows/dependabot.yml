@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # Enable updates for Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/" # Location of your Dockerfile
+    schedule:
+      interval: "daily" # Check for updates every day
+    # Optional: Pin updates to only allow minor/patch changes if desired
+    ignore:
+      - dependency-name: "alpine"
+        versions: [">= 4.0.0"] 

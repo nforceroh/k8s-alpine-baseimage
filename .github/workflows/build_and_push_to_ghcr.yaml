@@ -19,10 +19,20 @@ jobs:
       - name: Set build date
         id: date
         run: echo "BUILD_DATE=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+      - name: Get Alpine base digest
+        run: |
+          docker pull alpine:3.23
+          ALPINE_REPO_DIGEST=$(docker image inspect alpine:3.23 --format '{{index .RepoDigests 0}}')
+          ALPINE_DIGEST=${ALPINE_REPO_DIGEST##*@}
+          ALPINE_DIGEST_SHORT=${ALPINE_DIGEST#sha256:}
+          ALPINE_DIGEST_SHORT=${ALPINE_DIGEST_SHORT:0:12}
+          echo "ALPINE_DIGEST=${ALPINE_DIGEST}" >> $GITHUB_ENV
+          echo "ALPINE_DIGEST_SHORT=${ALPINE_DIGEST_SHORT}" >> $GITHUB_ENV
       - name: Variables defined
         run: |
           echo "IMAGE_NAME              = ${{ env.IMAGE_NAME }}"
           echo "BUILD_DATE              = ${{ env.BUILD_DATE }}"
+          echo "ALPINE_DIGEST           = ${{ env.ALPINE_DIGEST }}"
           echo "github.repository_owner = ${{ github.repository_owner }}"
       - run: echo "Starting build for ${{ github.repository }}"
       - uses: actions/checkout@v3
@@ -48,10 +58,12 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          pull: true
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.BUILD_DATE }}
             ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:3.23
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:3.23-${{ env.ALPINE_DIGEST_SHORT }}
             ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |

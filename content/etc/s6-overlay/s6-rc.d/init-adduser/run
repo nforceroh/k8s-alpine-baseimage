@@ -4,8 +4,9 @@ echo "Checking for abc user"
 PUID=${PUID:-3001}
 PGID=${PGID:-3000}
 
-/usr/sbin/addgroup -g "${PGID}" abc 2>/dev/null || true
-/usr/sbin/adduser -D -u "${PUID}" -G abc -h /app -g "App User" abc 2>/dev/null || true
+# Keep startup non-fatal if user/group already exists or cannot be recreated.
+/usr/sbin/addgroup -g "${PGID}" abc 2>/dev/null || echo "abc group already exists or could not be created"
+/usr/sbin/adduser -D -u "${PUID}" -G abc -h /app -g "App User" abc 2>/dev/null || echo "abc user already exists or could not be created"
 
 echo "
 ───────────────────────────────────────
@@ -18,6 +19,8 @@ for directory in /app /config /defaults; do
   if [ ! -d "${directory}" ]; then
     echo "Creating directory: ${directory}"
     mkdir -p "${directory}"
-    chown -R abc:abc "${directory}"
   fi
+
+  echo "Ensuring ownership for: ${directory}"
+  chown -R abc:abc "${directory}"
 done
