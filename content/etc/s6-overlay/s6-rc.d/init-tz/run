@@ -1,10 +1,17 @@
 #!/command/with-contenv bash
 
 TZ=${TZ:-America/New_York}
+ZONEINFO_PATH="/usr/share/zoneinfo/${TZ}"
 
 echo "Setting timezone to $TZ"
 
-if [ ! -f /etc/timezone ] || ! grep -q "$TZ" /etc/timezone; then
+if [ ! -e "${ZONEINFO_PATH}" ]; then
+  echo "Invalid timezone '${TZ}', falling back to America/New_York"
+  TZ="America/New_York"
+  ZONEINFO_PATH="/usr/share/zoneinfo/${TZ}"
+fi
+
+if [ ! -f /etc/timezone ] || ! grep -qxF "$TZ" /etc/timezone; then
   echo "$TZ" > /etc/timezone
-  ln -sf "/usr/share/zoneinfo/$TZ" /etc/localtime
+  ln -sf "${ZONEINFO_PATH}" /etc/localtime
 fi
